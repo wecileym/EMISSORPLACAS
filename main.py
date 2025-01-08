@@ -51,25 +51,31 @@ def main(page: ft.Page):
             ft.NavigationRailDestination(
                 icon=ft.Icon(ft.Icons.CREATE_NEW_FOLDER, size=40),
                 label="EDITAR",
+               padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
                 icon=ft.Icon(ft.Icons.VISIBILITY, size=40),
                 label="VISUALIZAÇÃO",
+               padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
                 icon=ft.Icon(ft.Icons.DOWNLOAD, size=40),
                 label="DOWNLOADS",
+               padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
                 icon=ft.Icon(ft.Icons.SHOW_CHART, size=40),
                 label="GRÁFICOS",
+               padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
                 icon=ft.Icon(ft.Icons.SETTINGS, size=40),
                 label="CONFIGURAÇÃO",
+               padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
         ],
         on_change=lambda e: update_content(e.control.selected_index),
+        
     )
 
     # Contêiner principal para exibir as telas
@@ -84,6 +90,7 @@ def main(page: ft.Page):
                 main_content,
             ],
             expand=True,
+            
         )
     )
 
