@@ -6,9 +6,84 @@ class Screen(ft.UserControl):
         return ft.Text("Tela Base - Substitua em subclasses")
 
 class EditScreen(Screen):
-    def build(self):
-        return ft.Text("Tela de Edição", size=20)
 
+    def build(self):
+        # Campos para inserir informações
+        self.nome_produto = ft.TextField(label="Nome do Produto", width=800)
+        self.valor = ft.TextField(label="Valor (R$)", keyboard_type="number", width=800)
+        self.desconto = ft.TextField(label="Desconto (%)", keyboard_type="number", width=800)
+        self.codigo = ft.TextField(label="Código do Produto", width=800)
+        self.total_prazo = ft.TextField(label="Total a Prazo (R$)", keyboard_type="number", width=800)
+
+        # Campo para selecionar o tamanho da placa
+        self.tamanho_placa = ft.Dropdown(
+            label="Tamanho da Placa",
+            options=[
+                ft.dropdown.Option("Mini"),
+                ft.dropdown.Option("Pequena"),
+                ft.dropdown.Option("Média"),
+                ft.dropdown.Option("Grande"),
+            ], width=800
+        )
+
+        # Botão de salvar
+        self.salvar_button = ft.ElevatedButton(
+            text="Salvar",
+            on_click=self.salvar_dados, width=150, height=50
+        )
+
+        # Layout dos campos
+       # Layout dos campos
+        # Layout dos campos
+        return ft.Container(
+            content=ft.Container(
+                content=ft.Column(
+                    [
+                        self.nome_produto,
+                        self.valor,
+                        self.desconto,
+                        self.codigo,
+                        self.total_prazo,
+                        self.tamanho_placa,
+                        self.salvar_button,
+                    ],
+                    spacing=30,
+                    alignment=ft.MainAxisAlignment.CENTER,  # Alinha os itens verticalmente no container interno
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,  # Centraliza horizontalmente os itens
+                ),
+                alignment=ft.alignment.center,  # Centraliza o container interno
+                border_radius=20,
+                padding=20,  # Margem interna do container
+                margin=ft.margin.all(10),
+            ),
+            padding=200,
+            alignment=ft.alignment.center,  # Centraliza o container externo no centro da tela
+            expand=True,  # Garante que o container externo ocupe todo o espaço disponível
+            
+        )
+    
+
+    def salvar_dados(self, e):
+        # Captura os valores inseridos nos campos
+        dados = {
+            "nome_produto": self.nome_produto.value,
+            "valor": self.valor.value,
+            "desconto": self.desconto.value,
+            "codigo": self.codigo.value,
+            "total_prazo": self.total_prazo.value,
+            "tamanho_placa": self.tamanho_placa.value,
+        }
+
+        # Exibe uma mensagem de sucesso (substitua por lógica para salvar os dados na imagem)
+        print("Dados salvos:", dados)
+        e.page.dialog = ft.AlertDialog(
+            title=ft.Text("Sucesso"),
+            content=ft.Text("Os dados foram salvos com sucesso!"),
+            actions=[ft.TextButton("OK", on_click=lambda e: e.page.dialog.close())],
+        )
+        e.page.dialog.open = True
+        e.page.update()
+        
 class ViewScreen(Screen):
     def build(self):
         return ft.Text("Tela de Visualização", size=20)
