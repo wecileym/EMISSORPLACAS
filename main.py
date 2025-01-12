@@ -1,4 +1,29 @@
 import flet as ft
+import base64
+import sqlite3
+
+
+
+
+
+class DataBase():
+
+    def fetch_images_from_db():
+        # Conexão com o banco de dados
+        conn = sqlite3.connect("seu_banco.db")
+        cursor = conn.cursor()
+
+        # Consulta para recuperar imagens
+        cursor.execute("SELECT Image FROM sua_tabela LIMIT 30")
+        rows = cursor.fetchall()
+        conn.close()
+
+        # Converte imagens binárias para formato base64
+        images_base64 = [
+            f"data:image/png;base64,{base64.b64encode(row[0]).decode()}" for row in rows
+        ]
+        return images_base64
+
 
 # Classes para as funcionalidades
 class Screen(ft.UserControl):
@@ -10,7 +35,10 @@ class EditScreen(Screen):
     def build(self):
         # Campos para inserir informações
         self.nome_produto = ft.TextField(label="Nome do Produto", width=800)
+        self.Valor_Final = ft.TextField(label="De (R$) Por (R$)", keyboard_type="number", width=800)
         self.valor = ft.TextField(label="Valor (R$)", keyboard_type="number", width=800)
+        self.Centavos = ft.TextField(label="Centavos", keyboard_type="number", width=800)
+        self.Taxas = ft.TextField(label="Taxas", width=800)
         self.desconto = ft.TextField(label="Desconto (%)", keyboard_type="number", width=800)
         self.codigo = ft.TextField(label="Código do Produto", width=800)
         self.total_prazo = ft.TextField(label="Total a Prazo (R$)", keyboard_type="number", width=800)
@@ -40,7 +68,10 @@ class EditScreen(Screen):
                 content=ft.Column(
                     [
                         self.nome_produto,
+                        self.Valor_Final,
                         self.valor,
+                        self.Centavos,
+                         self.Taxas,
                         self.desconto,
                         self.codigo,
                         self.total_prazo,
@@ -56,7 +87,7 @@ class EditScreen(Screen):
                 padding=20,  # Margem interna do container
                 margin=ft.margin.all(10),
             ),
-            padding=200,
+            padding=50,
             alignment=ft.alignment.center,  # Centraliza o container externo no centro da tela
             expand=True,  # Garante que o container externo ocupe todo o espaço disponível
             
