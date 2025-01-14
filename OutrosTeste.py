@@ -1,30 +1,15 @@
 import flet as ft
 
-
-def main(page):
-    
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-
-    def close_banner(e):
-        page.close(banner)
-        page.add(ft.Text("Action clicked: " + e.control.text))
-
-    action_button_style = ft.ButtonStyle(color=ft.Colors.BLUE)
-    banner = ft.Banner(
-        bgcolor=ft.Colors.AMBER_100,
-        leading=ft.Icon(ft.Icons.WARNING_AMBER_ROUNDED, color=ft.Colors.AMBER, size=40),
-        content=ft.Text(
-            value="Oops, there were some errors while trying to delete the file. What would you like me to do?",
-            color=ft.Colors.BLACK,
-        ),
-        actions=[
-            ft.TextButton(text="Retry", style=action_button_style, on_click=close_banner),
-            ft.TextButton(text="Ignore", style=action_button_style, on_click=close_banner),
-            ft.TextButton(text="Cancel", style=action_button_style, on_click=close_banner),
-        ],
+def main(page: ft.Page):
+    page.add(
+        ft.AutoComplete(
+            suggestions=[
+                ft.AutoCompleteSuggestion(key="one 1", value="One"),
+                ft.AutoCompleteSuggestion(key="two 2", value="Two"),
+                ft.AutoCompleteSuggestion(key="three 3", value="Three"),
+            ],
+            on_select=lambda e: print(e.control.selected_index, e.selection),
+        )
     )
-
-    page.add(ft.ElevatedButton("Show Banner", on_click=lambda e: page.open(banner)))
-
 
 ft.app(main)

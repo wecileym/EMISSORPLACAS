@@ -6,6 +6,8 @@ from FunctionsDataBase import DataBase
 # Função principal
 def main(page: ft.Page):
 
+    page.padding = 0  # Remove qualquer padding adicional
+
     # Função para alterar a tela exibida
     def update_content(index):
         screens = [
@@ -102,7 +104,7 @@ class LoginScreen(ft.UserControl):
             width=400,
             height=50,
             icon=ft.Image(
-                src="/Image/Google.webp",  # URL ou caminho local da imagem
+                src="Image/Google.webp",  # URL ou caminho local da imagem
                 width=400,
                 height=80,
                 fit=ft.ImageFit.CONTAIN,
@@ -112,24 +114,38 @@ class LoginScreen(ft.UserControl):
 
         self.error_message = ft.Text(value="", color="red")
 
-        return ft.Container(
-            content=ft.Column(
-                [
-                    ft.Text("Tela de Login", size=24, weight="bold"),
-                    self.username,
-                    self.password,
-                    self.login_button,
-                    self.login_with_google,
-                    self.error_message,
-                ],
-                spacing=10,
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            ),
-            padding=300,
-            alignment=ft.alignment.center,
-            expand=True,
+         # Layout principal com imagem de fundo
+        
+        return ft.Stack(
+            [
+                # Imagem de fundo
+                ft.Image(
+                    src="Image/pattern.png",  # Caminho da imagem de fundo
+                    fit=ft.ImageFit.COVER,
+                    expand=True,  # Preenche toda a tela
+                ),
+                # Conteúdo da tela de login
+                ft.Container(
+                    content=ft.Column(
+                        [
+                            ft.Text("Tela de Login", size=24, weight="bold", color="white"),
+                            self.username,
+                            self.password,
+                            self.login_button,
+                            self.login_with_google,
+                            self.error_message,
+                        ],
+                        spacing=10,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
+                    alignment=ft.alignment.center,
+                    padding=100
+                ),
+            ],
+            expand=True,  # Garante que o Stack preencha a tela
         )
+        
      
      def validate_login(self, e):
         # Simula uma validação de usuário e senha
@@ -254,4 +270,4 @@ class SettingsScreen(Screen):
         return ft.Text("Tela de Configuração", size=20)
 
 
-ft.app(main)
+ft.app(main, assets_dir="Image")
