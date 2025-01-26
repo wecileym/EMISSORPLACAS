@@ -140,7 +140,7 @@ class LoginScreen(ft.UserControl):
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     alignment=ft.alignment.center,
-                    padding=100
+                    padding=280
                 ),
             ],
             expand=True,  # Garante que o Stack preencha a tela
@@ -163,15 +163,15 @@ class Screen(ft.UserControl):
     def build(self):
         return ft.Text("Tela Base - Substitua em subclasses")
 
-class EditScreen(Screen):
+class EditScreen(ft.UserControl):  # Alterado para UserControl
 
     def build(self):
         # Campos para inserir informações
         self.nome_produto = ft.TextField(label="Nome do Produto", width=800)
-        self.Valor_Final = ft.TextField(label="De (R$) Por (R$)", keyboard_type="number", width=800)
+        self.valor_final = ft.TextField(label="De (R$) Por (R$)", keyboard_type="number", width=800)
         self.valor = ft.TextField(label="Valor (R$)", keyboard_type="number", width=800)
-        self.Centavos = ft.TextField(label="Centavos", keyboard_type="number", width=800)
-        self.Taxas = ft.TextField(label="Taxas", width=800)
+        self.centavos = ft.TextField(label="Centavos", keyboard_type="number", width=800)
+        self.taxas = ft.TextField(label="Taxas", width=800)
         self.desconto = ft.TextField(label="Desconto (%)", keyboard_type="number", width=800)
         self.codigo = ft.TextField(label="Código do Produto", width=800)
         self.total_prazo = ft.TextField(label="Total a Prazo (R$)", keyboard_type="number", width=800)
@@ -184,56 +184,67 @@ class EditScreen(Screen):
                 ft.dropdown.Option("Pequena"),
                 ft.dropdown.Option("Média"),
                 ft.dropdown.Option("Grande"),
-            ], width=800
+            ],
+            width=800,
         )
 
-        # Botão de salvar
+        # Botões
         self.salvar_button = ft.ElevatedButton(
             text="Salvar",
-            on_click=self.salvar_dados, width=800, height=50, bgcolor="green"
+            on_click=self.salvar_dados,
+            height=50,
+            width=392,
+            bgcolor="green",
         )
-        self.Cancelar = ft.ElevatedButton(
-            text="Cancelar", width=800, height=50, bgcolor="red"
-            # on_click=ft.Page.dialog.Close()
-        )
-
-        # Layout dos campos
-       # Layout dos campos
-        # Layout dos campos
-        return ft.Container(
-            content=ft.Container(
-                content=ft.Column(
-                    [
-                        self.nome_produto,
-                        self.Valor_Final,
-                        self.valor,
-                        self.Centavos,
-                         self.Taxas,
-                        self.desconto,
-                        self.codigo,
-                        self.total_prazo,
-                        self.tamanho_placa,
-                        self.salvar_button,
-                        self.Cancelar,
-                    ],
-                    spacing=15,
-                    alignment=ft.MainAxisAlignment.CENTER,  # Alinha os itens verticalmente no container interno
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,  # Centraliza horizontalmente os itens
-                ),
-                alignment=ft.alignment.center,  # Centraliza o container interno
-                border_radius=20,
-                padding=20,  # Margem interna do container
-                margin=ft.margin.all(10),
-            ),
-            padding=70,
-            alignment=ft.alignment.center,  # Centraliza o container externo no centro da tela
-            expand=True,  # Garante que o container externo ocupe todo o espaço disponível
+        self.cancelar_button = ft.ElevatedButton(
+            text="Cancelar",
+            on_click=self.Cancelado,
+            height=50,
+            width=392,
+            bgcolor="red",
             
         )
-        
+
+        # Layout principal ajustado para a parte inferior
+        return ft.Container(
+            content=ft.Column(
+                [
+                    # Campos organizados
+                    ft.Column(
+                        [
+                            self.nome_produto,
+                            self.valor_final,
+                            self.valor,
+                            self.centavos,
+                            self.taxas,
+                            self.desconto,
+                            self.codigo,
+                            self.total_prazo,
+                            self.tamanho_placa,
+                        ],
+                        spacing=15,
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    ),
+                    # Botões alinhados na parte inferior
+                    ft.Row(
+                        [
+                            self.salvar_button,
+                            self.cancelar_button,
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
+                    ),
+                ],
+                spacing=50,  # Espaçamento entre os campos e botões
+                alignment=ft.MainAxisAlignment.END,  # Move tudo para baixo
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            ),
+            padding=130,
+            alignment=ft.alignment.center,  # Centraliza horizontalmente
+            expand=True,  # Expande o container para ocupar a tela inteira
+        )
 
     def salvar_dados(self, e):
-        # Captura os valores inseridos nos campos
         dados = {
             "nome_produto": self.nome_produto.value,
             "valor": self.valor.value,
@@ -242,15 +253,23 @@ class EditScreen(Screen):
             "total_prazo": self.total_prazo.value,
             "tamanho_placa": self.tamanho_placa.value,
         }
-
-        # Exibe uma mensagem de sucesso (substitua por lógica para salvar os dados na imagem)
         print("Dados salvos:", dados)
-        e.page.dialog = ft.AlertDialog(
-            title=ft.Text("Sucesso"),
-            content=ft.Text("Os dados foram salvos com sucesso!"),
-            actions=[ft.TextButton("OK", on_click=lambda e: e.page.dialog.close())],
-        )
-        e.page.dialog.open = True
+        e.page.snack_bar = ft.SnackBar(ft.Text("Dados salvos com sucesso!"))
+        e.page.snack_bar.open = True
+        e.page.update()
+
+    def Cancelado(self, e):
+        dados = {
+            "nome_produto": self.nome_produto.value,
+            "valor": self.valor.value,
+            "desconto": self.desconto.value,
+            "codigo": self.codigo.value,
+            "total_prazo": self.total_prazo.value,
+            "tamanho_placa": self.tamanho_placa.value,
+        }
+        print("Dados Cancelados:", dados)
+        e.page.snack_bar = ft.SnackBar(ft.Text("Dados Cancelados!"))
+        e.page.snack_bar.open = True
         e.page.update()
         
 class ViewScreen(Screen):
@@ -261,10 +280,105 @@ class DownloadScreen(Screen):
     def build(self):
         return ft.Text("Tela de Downloads", size=20)
 
-class ChartScreen(Screen):
-    def build(self):
-        return ft.Text("Tela de Gráficos", size=20)
-    
+class ChartScreen(ft.UserControl):
+
+   def build(self):
+        
+        chart = ft.BarChart(
+            bar_groups=[
+                ft.BarChartGroup(
+                    x=0,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=40,
+                            width=40,
+                            color=ft.Colors.AMBER,
+                            tooltip="Apple",
+                            border_radius=0,
+                        ),
+                    ],
+                ),
+                ft.BarChartGroup(
+                    x=1,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=100,
+                            width=40,
+                            color=ft.Colors.BLUE,
+                            tooltip="Blueberry",
+                            border_radius=0,
+                        ),
+                    ],
+                ),
+                ft.BarChartGroup(
+                    x=2,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=30,
+                            width=40,
+                            color=ft.Colors.RED,
+                            tooltip="Cherry",
+                            border_radius=0,
+                        ),
+                    ],
+                ),
+                ft.BarChartGroup(
+                    x=3,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=60,
+                            width=40,
+                            color=ft.Colors.ORANGE,
+                            tooltip="Orange",
+                            border_radius=0,
+                        ),
+                    ],
+                ),
+            ],
+            border=ft.border.all(1, ft.Colors.GREY_400),
+            left_axis=ft.ChartAxis(
+                labels_size=40, title=ft.Text("Fruit supply"), title_size=40
+            ),
+            bottom_axis=ft.ChartAxis(
+                labels=[
+                    ft.ChartAxisLabel(
+                        value=0, label=ft.Container(ft.Text("Apple"), padding=10)
+                    ),
+                    ft.ChartAxisLabel(
+                        value=1, label=ft.Container(ft.Text("Blueberry"), padding=10)
+                    ),
+                    ft.ChartAxisLabel(
+                        value=2, label=ft.Container(ft.Text("Cherry"), padding=10)
+                    ),
+                    ft.ChartAxisLabel(
+                        value=3, label=ft.Container(ft.Text("Orange"), padding=10)
+                    ),
+                ],
+                labels_size=40,
+            ),
+            horizontal_grid_lines=ft.ChartGridLines(
+                color=ft.Colors.GREY_300, width=1, dash_pattern=[3, 3]
+            ),
+            tooltip_bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.GREY_300),
+            max_y=110,
+            interactive=True,
+            expand=True,  # Faz o gráfico ocupar todo o espaço disponível
+        )
+        
+        # Coloca o gráfico dentro de um Container para expandir e ocupar a tela inteira
+
+        return ft.Container(
+                content=chart,
+                padding=50,  # Defina o padding para ajustar a distância
+                expand=True,  # Garante que o gráfico vai expandir e ocupar toda a tela
+                alignment=ft.alignment.center, # Centraliza o gráfico
+                height=1000,
+            )
+        
 class SettingsScreen(Screen):
     def build(self):
         return ft.Text("Tela de Configuração", size=20)

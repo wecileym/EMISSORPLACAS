@@ -1,57 +1,125 @@
 import flet as ft
-import base64
-import sqlite3  # ou a biblioteca de banco de dados que você está usando
 
-# Função para buscar imagens do banco de dados
-def fetch_images_from_db():
-    # Conexão com o banco de dados
-    conn = sqlite3.connect("seu_banco.db")
-    cursor = conn.cursor()
+import flet as ft
 
-    # Consulta para recuperar imagens
-    cursor.execute("SELECT imagem FROM sua_tabela LIMIT 30")
-    rows = cursor.fetchall()
-    conn.close()
+class ChartScreen(ft.UserControl):
+    def build(self):
+        # Função chamada quando a página for redimensionada
+        def on_resize(e):
+            # Obtém a altura da tela
+            screen_height = self.page.height
 
-    # Converte imagens binárias para formato base64
-    images_base64 = [
-        f"data:image/png;base64,{base64.b64encode(row[0]).decode()}" for row in rows
-    ]
-    return images_base64
+            # Atualiza a altura do gráfico com base na altura da tela
+            chart.height = screen_height * 0.6  # O gráfico ocupará 60% da altura da tela
+            self.update()  # Atualiza o componente
 
-def main(page: ft.Page):
-    page.title = "Visualização de Placas"
-    page.theme_mode = ft.ThemeMode.LIGHT
-    page.padding = 20
-    page.scroll = "always"  # Permitir rolagem na página caso necessário
-    page.update()
-
-    # Contêiner para as imagens em um layout espaçoso
-    image_gallery = ft.GridView(
-        expand=1,  # Expande para ocupar o espaço disponível
-        max_extent=400,  # Define o tamanho máximo de cada "célula" (imagens grandes)
-        child_aspect_ratio=1,  # Mantém as imagens quadradas
-        spacing=20,  # Espaço entre as imagens
-        run_spacing=20,  # Espaço entre as linhas
-    )
-
-    # Busca imagens do banco de dados
-    images_from_db = fetch_images_from_db()
-
-    # Adiciona as imagens recuperadas ao GridView
-    for img_src in images_from_db:
-        image_gallery.controls.append(
-            ft.Image(
-                src=img_src,
-                width=400,  # Largura grande para a visualização
-                height=400,  # Altura correspondente
-                fit=ft.ImageFit.COVER,  # Ajusta a imagem para preencher sem distorcer
-                border_radius=ft.border_radius.all(15),  # Bordas arredondadas
-            )
+        # Criando o gráfico de barras
+        chart = ft.BarChart(
+            bar_groups=[
+                ft.BarChartGroup(
+                    x=0,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=40,
+                            width=40,
+                            color=ft.Colors.AMBER,
+                            tooltip="Apple",
+                            border_radius=0,
+                        ),
+                    ],
+                ),
+                ft.BarChartGroup(
+                    x=1,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=100,
+                            width=40,
+                            color=ft.Colors.BLUE,
+                            tooltip="Blueberry",
+                            border_radius=0,
+                        ),
+                    ],
+                ),
+                ft.BarChartGroup(
+                    x=2,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=30,
+                            width=40,
+                            color=ft.Colors.RED,
+                            tooltip="Cherry",
+                            border_radius=0,
+                        ),
+                    ],
+                ),
+                ft.BarChartGroup(
+                    x=3,
+                    bar_rods=[
+                        ft.BarChartRod(
+                            from_y=0,
+                            to_y=60,
+                            width=40,
+                            color=ft.Colors.ORANGE,
+                            tooltip="Orange",
+                            border_radius=0,
+                        ),
+                    ],
+                ),
+            ],
+            border=ft.border.all(1, ft.Colors.GREY_400),
+            left_axis=ft.ChartAxis(
+                labels_size=40, title=ft.Text("Fruit supply"), title_size=40
+            ),
+            bottom_axis=ft.ChartAxis(
+                labels=[
+                    ft.ChartAxisLabel(
+                        value=0, label=ft.Container(ft.Text("Apple"), padding=10)
+                    ),
+                    ft.ChartAxisLabel(
+                        value=1, label=ft.Container(ft.Text("Blueberry"), padding=10)
+                    ),
+                    ft.ChartAxisLabel(
+                        value=2, label=ft.Container(ft.Text("Cherry"), padding=10)
+                    ),
+                    ft.ChartAxisLabel(
+                        value=3, label=ft.Container(ft.Text("Orange"), padding=10)
+                    ),
+                ],
+                labels_size=40,
+            ),
+            horizontal_grid_lines=ft.ChartGridLines(
+                color=ft.Colors.GREY_300, width=1, dash_pattern=[3, 3]
+            ),
+            tooltip_bgcolor=ft.Colors.with_opacity(0.5, ft.Colors.GREY_300),
+            max_y=110,
+            interactive=True,
+            expand=True,  # Faz o gráfico ocupar todo o espaço disponível
         )
 
-    # Adiciona a galeria de imagens à página
-    page.add(image_gallery)
-    page.update()
+        # Registra o evento de redimensionamento da página
+        self.page.on_resize = on_resize
+
+        # Retorna o Container com o gráfico
+        return ft.Container(
+            content=chart,
+            padding=50,
+            expand=True,
+            alignment=ft.alignment.center,
+            height=self.page.height * 0.6,  # Inicializa com 60% da altura da tela
+        )
+
+
+def main(page: ft.Page):
+    # Inicializa o sistema com ChartScreen
+    page.title = "Gráfico de Barras"
+    page.add(ChartScreen())  # Adiciona a tela principal
+
 
 ft.app(main)
+
+
+# Configuração para iniciar a aplicação
+ft.app(target=build)
