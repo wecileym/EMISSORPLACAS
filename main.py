@@ -1,12 +1,10 @@
 import flet as ft
 from FunctionsDataBase import DataBase
-   
-
 
 # Função principal
 def main(page: ft.Page):
 
-    page.padding = 0  # Remove qualquer padding adicional
+    page.padding = 0,  # Remove qualquer padding adicional
 
     # Função para alterar a tela exibida
     def update_content(index):
@@ -15,7 +13,7 @@ def main(page: ft.Page):
             ViewScreen(),
             DownloadScreen(),
             ChartScreen(),
-            SettingsScreen(),
+            # SettingsScreen(),
         ]
         main_content.controls.clear()
         main_content.controls.append(screens[index])
@@ -82,15 +80,13 @@ def main(page: ft.Page):
     # Exibe a tela de login inicialmente
     page.add(LoginScreen(on_login_success=show_main_app))
     
-class LoginScreen(ft.UserControl):
-     
-     def __init__(self, on_login_success):
-
+class LoginScreen(ft.Control):
+    
+    def __init__(self, on_login_success):
         super().__init__()
         self.on_login_success = on_login_success
 
-     def build(self):
-
+    def build(self):
         self.username = ft.TextField(label="Usuário", width=400)
         self.password = ft.TextField(
             label="Senha", password=True, can_reveal_password=True, width=400,
@@ -108,14 +104,12 @@ class LoginScreen(ft.UserControl):
                 width=400,
                 height=80,
                 fit=ft.ImageFit.CONTAIN,
-            )
-            
+            ),
         )
 
         self.error_message = ft.Text(value="", color="red")
 
-         # Layout principal com imagem de fundo
-        
+        # Layout principal com imagem de fundo
         return ft.Stack(
             [
                 # Imagem de fundo
@@ -140,114 +134,131 @@ class LoginScreen(ft.UserControl):
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     ),
                     alignment=ft.alignment.center,
-                    padding=280
+                    padding=280,
                 ),
             ],
             expand=True,  # Garante que o Stack preencha a tela
         )
-        
-     
-     def validate_login(self, e):
+
+    def validate_login(self, e):
         # Simula uma validação de usuário e senha
         username = self.username.value
         password = self.password.value
 
-        if username == "admin" and password == "1234":
+        if username == "admin" and password == "123":
             self.on_login_success()
         else:
             self.error_message.value = "Usuário ou senha inválidos."
             self.update()
 
+    def _get_control_name(self):
+        return "login_screen"  # Identificador único para o controle
+
 # Classes para as funcionalidades
-class Screen(ft.UserControl):
+class Screen(ft.Control):
     def build(self):
         return ft.Text("Tela Base - Substitua em subclasses")
 
-class EditScreen(ft.UserControl):  # Alterado para UserControl
+class EditScreen(ft.Control):  # Alterado para Container
 
     def build(self):
-        # Campos para inserir informações
-        self.nome_produto = ft.TextField(label="Nome do Produto", width=800)
-        self.valor_final = ft.TextField(label="De (R$) Por (R$)", keyboard_type="number", width=800)
-        self.valor = ft.TextField(label="Valor (R$)", keyboard_type="number", width=800)
-        self.centavos = ft.TextField(label="Centavos", keyboard_type="number", width=800)
-        self.taxas = ft.TextField(label="Taxas", width=800)
-        self.desconto = ft.TextField(label="Desconto (%)", keyboard_type="number", width=800)
-        self.codigo = ft.TextField(label="Código do Produto", width=800)
-        self.total_prazo = ft.TextField(label="Total a Prazo (R$)", keyboard_type="number", width=800)
 
-        # Campo para selecionar o tamanho da placa
+        # Definição dos campos
+        self.nome_produto = ft.TextField(label="Nome do Produto")
+        self.valor_final = ft.TextField(label="De (R$) Por (R$)", icon=ft.Icons.MONEY)
+        self.valor = ft.TextField(label="Valor (R$)", icon=ft.Icons.MONEY)
+        self.centavos = ft.TextField(label="Centavos", icon=ft.Icons.FORMAT_LIST_NUMBERED)
+        self.taxas = ft.TextField(label="Taxas", icon=ft.Icons.SELL)
+        self.desconto = ft.TextField(label="Desconto (%)", icon=ft.Icons.PERCENT)
+        self.codigo = ft.TextField(label="Código do Produto", icon=ft.Icons.QR_CODE)
+        self.total_prazo = ft.TextField(label="Total a Prazo (R$)", icon=ft.Icons.TIMER)
         self.tamanho_placa = ft.Dropdown(
             label="Tamanho da Placa",
             options=[
                 ft.dropdown.Option("Mini"),
-                ft.dropdown.Option("Pequena"),
-                ft.dropdown.Option("Média"),
+                ft.dropdown.Option("Pequeno"),
+                ft.dropdown.Option("Médio"),
                 ft.dropdown.Option("Grande"),
+                
             ],
-            width=800,
+            icon=ft.Icons.VIEW_COLUMN,  # Ícone substituído por um válido
         )
 
-        # Botões
-        self.salvar_button = ft.ElevatedButton(
-            text="Salvar",
-            on_click=self.salvar_dados,
-            height=50,
-            width=392,
-            bgcolor="green",
-        )
-        self.cancelar_button = ft.ElevatedButton(
-            text="Cancelar",
-            on_click=self.Cancelado,
-            height=50,
-            width=392,
-            bgcolor="red",
-            
-        )
+        # Layout principal
+        return ft.Column(
 
-        # Layout principal ajustado para a parte inferior
-        return ft.Container(
-            content=ft.Column(
-                [
-                    # Campos organizados
-                    ft.Column(
-                        [
-                            self.nome_produto,
-                            self.valor_final,
-                            self.valor,
-                            self.centavos,
-                            self.taxas,
-                            self.desconto,
-                            self.codigo,
-                            self.total_prazo,
-                            self.tamanho_placa,
-                        ],
-                        spacing=15,
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                # Título da Tela (Centralizado)
+                ft.Container(
+                    content=ft.Text(
+                        "EMISSÃO DE PLACAS",
+                        size=40,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.WHITE,
                     ),
-                    # Botões alinhados na parte inferior
-                    ft.Row(
-                        [
-                            self.salvar_button,
-                            self.cancelar_button,
-                        ],
-                        alignment=ft.MainAxisAlignment.CENTER,
-                    ),
-                ],
-                spacing=50,  # Espaçamento entre os campos e botões
-                alignment=ft.MainAxisAlignment.END,  # Move tudo para baixo
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            ),
-            padding=130,
-            alignment=ft.alignment.center,  # Centraliza horizontalmente
-            expand=True,  # Expande o container para ocupar a tela inteira
+                    padding=40,
+                    alignment=ft.alignment.center,  # Centraliza o título
+                ),
+                # Formulário de entrada
+                ft.Card(
+                    content=ft.Container(
+                        ft.Column(
+                            [
+                                self.nome_produto,
+                                self.valor_final,
+                                self.valor,
+                                self.centavos,
+                                self.taxas,
+                                self.desconto,
+                                self.codigo,
+                                self.total_prazo,
+                                self.tamanho_placa,
+                            ],
+                            spacing=15,
+                        ),
+                        padding=15,
+                        bgcolor=ft.Colors.WHITE12,
+                        border_radius=20,
+                        
+                    )
+                ),
+                # Botões
+                ft.Row(
+                    [
+                        ft.ElevatedButton(
+                            "Salvar",
+                            icon=ft.Icons.CHECK,
+                            bgcolor=ft.Colors.GREEN,
+                            color=ft.Colors.WHITE,
+                            on_click=self.salvar_dados,
+                            width=150,
+                            height=50,
+                        ),
+                        ft.ElevatedButton(
+                            "Cancelar",
+                            icon=ft.Icons.CLOSE,
+                            bgcolor=ft.Colors.RED,
+                            color=ft.Colors.WHITE,
+                            on_click=self.Cancelado,
+                            width=150,
+                            height=50,                            
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.START,  # Alinha os botões à direita
+                    spacing=10,
+                ),
+                
+            ],
+            spacing=20,  # Espaçamento geral entre os elementos na coluna
         )
 
     def salvar_dados(self, e):
         dados = {
             "nome_produto": self.nome_produto.value,
+            "valor_final": self.valor_final.value,
             "valor": self.valor.value,
+            "centavos": self.centavos.value,
+            "taxas": self.taxas.value,
             "desconto": self.desconto.value,
             "codigo": self.codigo.value,
             "total_prazo": self.total_prazo.value,
@@ -259,19 +270,11 @@ class EditScreen(ft.UserControl):  # Alterado para UserControl
         e.page.update()
 
     def Cancelado(self, e):
-        dados = {
-            "nome_produto": self.nome_produto.value,
-            "valor": self.valor.value,
-            "desconto": self.desconto.value,
-            "codigo": self.codigo.value,
-            "total_prazo": self.total_prazo.value,
-            "tamanho_placa": self.tamanho_placa.value,
-        }
-        print("Dados Cancelados:", dados)
-        e.page.snack_bar = ft.SnackBar(ft.Text("Dados Cancelados!"))
+        print("Operação cancelada.")
+        e.page.snack_bar = ft.SnackBar(ft.Text("Operação cancelada!"))
         e.page.snack_bar.open = True
         e.page.update()
-        
+
 class ViewScreen(Screen):
     def build(self):
         return ft.Text("Tela de Visualização", size=20)
@@ -280,7 +283,7 @@ class DownloadScreen(Screen):
     def build(self):
         return ft.Text("Tela de Downloads", size=20)
 
-class ChartScreen(ft.UserControl):
+class ChartScreen(ft.Control):
 
    def build(self):
         
@@ -379,9 +382,36 @@ class ChartScreen(ft.UserControl):
                 height=1000,
             )
         
-class SettingsScreen(Screen):
-    def build(self):
-        return ft.Text("Tela de Configuração", size=20)
+# class SettingsScreen(ft.Container):
 
+#     def check_item_clicked(self, e):
+#         e.control.checked = not e.control.checked
+#         e.page.update()
+
+#     def __init__(self):
+#         super().__init__()
+#         self.content = self.build()
+
+#     def build(self):
+        return ft.AppBar(
+            leading=ft.Icon(ft.Icons.PALETTE),
+            leading_width=40,
+            title=ft.Text("AppBar Example"),
+            center_title=False,
+            bgcolor=ft.Colors.AMBER_100,
+            actions=[
+                ft.IconButton(ft.Icons.WB_SUNNY_OUTLINED),
+                ft.IconButton(ft.Icons.FILTER_3),
+                ft.PopupMenuButton(
+                    items=[
+                        ft.PopupMenuItem(text="Item 1"),
+                        ft.PopupMenuItem(),  # divider
+                        ft.PopupMenuItem(
+                            text="Checked item", checked=False, on_click=self.check_item_clicked
+                        ),
+                    ]
+                ),
+            ],
+        )
 
 ft.app(main, assets_dir="Image")
