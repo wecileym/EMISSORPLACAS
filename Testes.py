@@ -1,10 +1,13 @@
 import flet as ft
 from FunctionsDataBase import DataBase
+import os
+os.environ["FLUTTER_SUPPRESS_WARNINGS"] = "1"
+
 
 # Função principal
 def main(page: ft.Page):
 
-    page.padding = 0,  # Remove qualquer padding adicional
+    page.padding = 0  # Remove qualquer padding adicional
 
     # Função para alterar a tela exibida
     def update_content(index):
@@ -13,7 +16,7 @@ def main(page: ft.Page):
             ViewScreen(),
             DownloadScreen(),
             ChartScreen(),
-            # SettingsScreen(),
+            SettingsScreen(),
         ]
         main_content.controls.clear()
         main_content.controls.append(screens[index])
@@ -28,27 +31,27 @@ def main(page: ft.Page):
         group_alignment=0.0,
         destinations=[
             ft.NavigationRailDestination(
-                icon=ft.Icon(ft.Icons.CREATE_NEW_FOLDER, size=40),
+                icon=ft.Icon(ft.icons.CREATE_NEW_FOLDER, size=40),
                 label="EDITAR",
                padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
-                icon=ft.Icon(ft.Icons.VISIBILITY, size=40),
+                icon=ft.Icon(ft.icons.VISIBILITY, size=40),
                 label="VISUALIZAÇÃO",
                padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
-                icon=ft.Icon(ft.Icons.DOWNLOAD, size=40),
+                icon=ft.Icon(ft.icons.DOWNLOAD, size=40),
                 label="DOWNLOADS",
                padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
-                icon=ft.Icon(ft.Icons.SHOW_CHART, size=40),
+                icon=ft.Icon(ft.icons.SHOW_CHART, size=40),
                 label="GRÁFICOS",
                padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
-                icon=ft.Icon(ft.Icons.SETTINGS, size=40),
+                icon=ft.Icon(ft.icons.SETTINGS, size=40),
                 label="CONFIGURAÇÃO",
                padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
@@ -80,7 +83,7 @@ def main(page: ft.Page):
     # Exibe a tela de login inicialmente
     page.add(LoginScreen(on_login_success=show_main_app))
     
-class LoginScreen(ft.Control):
+class LoginScreen(ft.UserControl):
     
     def __init__(self, on_login_success):
         super().__init__()
@@ -151,27 +154,24 @@ class LoginScreen(ft.Control):
             self.error_message.value = "Usuário ou senha inválidos."
             self.update()
 
-    def _get_control_name(self):
-        return "login_screen"  # Identificador único para o controle
-
 # Classes para as funcionalidades
-class Screen(ft.Control):
+class Screen(ft.UserControl):
     def build(self):
         return ft.Text("Tela Base - Substitua em subclasses")
 
-class EditScreen(ft.Control):  # Alterado para Container
+class EditScreen(ft.UserControl):  # Alterado para Container
 
     def build(self):
 
         # Definição dos campos
         self.nome_produto = ft.TextField(label="Nome do Produto")
-        self.valor_final = ft.TextField(label="De (R$) Por (R$)", icon=ft.Icons.MONEY)
-        self.valor = ft.TextField(label="Valor (R$)", icon=ft.Icons.MONEY)
-        self.centavos = ft.TextField(label="Centavos", icon=ft.Icons.FORMAT_LIST_NUMBERED)
-        self.taxas = ft.TextField(label="Taxas", icon=ft.Icons.SELL)
-        self.desconto = ft.TextField(label="Desconto (%)", icon=ft.Icons.PERCENT)
-        self.codigo = ft.TextField(label="Código do Produto", icon=ft.Icons.QR_CODE)
-        self.total_prazo = ft.TextField(label="Total a Prazo (R$)", icon=ft.Icons.TIMER)
+        self.valor_final = ft.TextField(label="De (R$) Por (R$)", icon=ft.icons.MONEY)
+        self.valor = ft.TextField(label="Valor (R$)", icon=ft.icons.MONEY)
+        self.centavos = ft.TextField(label="Centavos", icon=ft.icons.FORMAT_LIST_NUMBERED)
+        self.taxas = ft.TextField(label="Taxas", icon=ft.icons.SELL)
+        self.desconto = ft.TextField(label="Desconto (%)", icon=ft.icons.PERCENT)
+        self.codigo = ft.TextField(label="Código do Produto", icon=ft.icons.QR_CODE)
+        self.total_prazo = ft.TextField(label="Total a Prazo (R$)", icon=ft.icons.TIMER)
         self.tamanho_placa = ft.Dropdown(
             label="Tamanho da Placa",
             options=[
@@ -181,7 +181,7 @@ class EditScreen(ft.Control):  # Alterado para Container
                 ft.dropdown.Option("Grande"),
                 
             ],
-            icon=ft.Icons.VIEW_COLUMN,  # Ícone substituído por um válido
+            icon=ft.icons.VIEW_COLUMN,  # Ícone substituído por um válido
         )
 
         # Layout principal
@@ -227,7 +227,7 @@ class EditScreen(ft.Control):  # Alterado para Container
                     [
                         ft.ElevatedButton(
                             "Salvar",
-                            icon=ft.Icons.CHECK,
+                            icon=ft.icons.CHECK,
                             bgcolor=ft.Colors.GREEN,
                             color=ft.Colors.WHITE,
                             on_click=self.salvar_dados,
@@ -236,7 +236,7 @@ class EditScreen(ft.Control):  # Alterado para Container
                         ),
                         ft.ElevatedButton(
                             "Cancelar",
-                            icon=ft.Icons.CLOSE,
+                            icon=ft.icons.CLOSE,
                             bgcolor=ft.Colors.RED,
                             color=ft.Colors.WHITE,
                             on_click=self.Cancelado,
@@ -382,36 +382,41 @@ class ChartScreen(ft.Control):
                 height=1000,
             )
         
-# class SettingsScreen(ft.Container):
+class SettingsScreen(ft.UserControl):
 
-#     def check_item_clicked(self, e):
-#         e.control.checked = not e.control.checked
-#         e.page.update()
+    # def __init__(self):
+    #     super().__init__()  # Inicializa a classe base
+    #     self.checked_item_state = False  # Estado inicial do item marcado
 
-#     def __init__(self):
-#         super().__init__()
-#         self.content = self.build()
+    # def check_item_clicked(self, e):
+    #     # Alterna o estado do item marcado
+    #     self.checked_item_state = not self.checked_item_state
+    #     self.update()  # Atualiza o componente
 
-#     def build(self):
-        return ft.AppBar(
-            leading=ft.Icon(ft.Icons.PALETTE),
-            leading_width=40,
-            title=ft.Text("AppBar Example"),
-            center_title=False,
-            bgcolor=ft.Colors.AMBER_100,
-            actions=[
-                ft.IconButton(ft.Icons.WB_SUNNY_OUTLINED),
-                ft.IconButton(ft.Icons.FILTER_3),
-                ft.PopupMenuButton(
-                    items=[
-                        ft.PopupMenuItem(text="Item 1"),
-                        ft.PopupMenuItem(),  # divider
-                        ft.PopupMenuItem(
-                            text="Checked item", checked=False, on_click=self.check_item_clicked
-                        ),
-                    ]
-                ),
-            ],
-        )
+    # def build(self):
+    #     # Define o AppBar com os itens desejados
+    #     return ft.AppBar(
+    #         leading=ft.Icon(ft.icons.PALETTE),
+    #         leading_width=40,
+    #         title=ft.Text("AppBar Example"),
+    #         center_title=False,
+    #         bgcolor=ft.colors.AMBER_100,
+    #         actions=[
+    #             ft.IconButton(ft.icons.WB_SUNNY_OUTLINED),
+    #             ft.IconButton(ft.icons.FILTER_3),
+    #             ft.PopupMenuButton(
+    #                 items=[
+    #                     ft.PopupMenuItem(text="Item 1"),
+    #                     ft.PopupMenuItem(),  # Divider
+    #                     ft.PopupMenuItem(
+    #                         text="Checked item",
+    #                         checked=self.checked_item_state,
+    #                         on_click=self.check_item_clicked,
+    #                     ),
+    #                 ]
+    #             ),
+    #         ],
+    #     )
+        pass
 
 ft.app(main, assets_dir="Image")
