@@ -1,23 +1,20 @@
 import flet as ft
-
    
 # Função principal
 def main(page: ft.Page):
-
+        
     page.padding = 0  # Remove qualquer padding adicional
     page.window_maximized = True
-
+    
     # Função para alterar a tela exibida
     def update_content(index):
         screens = [
-            Dashboard(),
-            ViewScreen(),
-            DownloadScreen(),
-            ChartScreen(),
-            SettingsScreen(),
+            Message(),
+            Sendies(),
+            Notifications(),
+            SettingsScreen(page),
         ]
-        main_content.controls.clear()  # Clear the content before appending new screen
-        main_content.controls.append(screens[index])  # Append the new screen to the container
+        main_content.content = screens[index]  # Usar .content em vez de .controls
         page.update()
 
     # Barra de navegação
@@ -28,18 +25,13 @@ def main(page: ft.Page):
         bgcolor="#222222",  # Cor de fundo escura
         destinations=[
             ft.NavigationRailDestination(
-                icon=ft.icons.INSERT_CHART, selected_icon=ft.icons.INSERT_CHART,
-                label="DASHBOARD",
+                icon=ft.icons.MESSAGE, selected_icon=ft.icons.MESSAGE,
+                label="MENSAGENS",
                 padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
-                icon=ft.icons.MONEY_OFF_OUTLINED, selected_icon=ft.icons.MONEY_OFF_OUTLINED,
-                label="FINANCEIRO",
-                padding=ft.Padding(top=20, right=10, bottom=10, left=10),
-            ),
-            ft.NavigationRailDestination(
-                icon=ft.icons.STORAGE, selected_icon=ft.icons.STORAGE,
-                label="ESTOQUE",
+                icon=ft.icons.SEND_ROUNDED, selected_icon=ft.icons.SEND_ROUNDED,
+                label="ENVIADOS",
                 padding=ft.Padding(top=20, right=10, bottom=10, left=10),
             ),
             ft.NavigationRailDestination(
@@ -57,11 +49,11 @@ def main(page: ft.Page):
     )
 
     # Contêiner principal para exibir as telas
-    main_content = ft.Column(expand=True)
+    main_content = ft.Container(expand=True)
 
     # Layout da barra de navegação à esquerda
     navigation_layout = ft.Container(
-        rail, padding=10, height=800, width=200, border_radius=50, margin=15, bgcolor="#222222"
+        rail, padding=10, height=500, width=200, border_radius=70, margin=25, bgcolor="#222222"
     )
 
     # Layout principal com a barra de navegação e o conteúdo dinâmico
@@ -195,263 +187,106 @@ class LoginScreen(ft.UserControl):
 
 # Classes para as funcionalidades
 class Screen(ft.UserControl):
-   
-    def build(self):
-        return ft.Text("Tela Base - Substitua em subclasses")
-
-class Dashboard(Screen):
+    
+    def __init__(self):
+        super().__init__()
 
     def build(self):
+        return ft.Container(
+            expand=True,
+            content=ft.Text("Tela Base - Substitua em subclasses")
+        )
+
+class Message(Screen):
+
+    def build(self):
+
+        message_area = ft.Container(
+            expand=True,
+            bgcolor="#363232",
+            border_radius=30,
+            margin=5,
+            padding=10,
+            content=ft.Row(  # <- força o conteúdo interno a expandir horizontalmente
+                expand=True,
+                controls=[
+                    ft.Text("Área de mensagens...", color="white", expand=True)
+                ]
+            )
+        )
+
+        Buttom = ft.Row(
+            controls=[
+                ft.TextField(
+                hint_text="Digite sua mensagem...",
+                bgcolor="#222222",
+                border_radius=20,
+                color="white",
+                expand=True,  # Ocupa espaço restante
+            ),
+             ft.ElevatedButton("Enviar", bgcolor="#60923D", color="white", height=50, width=110),
+             ft.ElevatedButton("Imagem", bgcolor="#1D7EBE", color="white", height=50, width=110),
+            
+            ],
+             alignment=ft.MainAxisAlignment.CENTER,
+             spacing=10,
+        )
+
         # Container principal (esquerda)
         main_container = ft.Container(
             expand=True,
-            bgcolor="blue",
-            margin=30,
-            # height=950,
+            bgcolor="#222222",
+            # bgcolor="transparent",
+            margin=10,
+            padding=20,
             alignment=ft.alignment.center,
-            border_radius=30,
+            border_radius=20,
             content=ft.Column(
                 controls=[
-                    # Primeiro container (com dois dentro)
-                    ft.Container(
-                        bgcolor="red",
-                        padding=20,
-                        border_radius=15,
-                        content=ft.Row(
-                            controls=[
-                                ft.Container(
-                                    bgcolor="#444444",
-                                    expand=True,
-                                    height=150,
-                                    border_radius=40,
-                                ),
-                                ft.Container(
-                                    bgcolor="#555555",
-                                    expand=True,
-                                    height=150,
-                                    border_radius=40,
-                                ),
-                            ],
-                            # spacing=10
-                        ),
-                    ),
-
-                    # Segundo container (com dois dentro)
-                    ft.Container(
-                        bgcolor="green",
-                        padding=20,
-                        border_radius=15,
-                        content=ft.Row(
-                            controls=[
-                                ft.Container(
-                                    bgcolor="#666666",
-                                    expand=True,
-                                    height=150,
-                                    border_radius=40,
-                                ),
-                                ft.Container(
-                                    bgcolor="#777777",
-                                    expand=True,
-                                    height=150,
-                                    border_radius=40,
-                                ),
-                            ],
-                            # spacing=10
-                        )
-                    ),
-
-                    # Terceiro container
-                    ft.Container(
-                        bgcolor="#888888",
-                        height=200,
-                        border_radius=15,
-                        alignment=ft.alignment.center,
-                    ),
+                    ft.Text("Mensagens", size=20, weight=ft.FontWeight.BOLD, color="white"),
+                    ft.Divider(height=10, color="#2C2C2C"),    
+                    message_area,
+                    Buttom
                 ],
-                # spacing=10
+                spacing=10,
+                expand=True,  # Garante que a coluna também se expanda   
             )
         )
         
-        ft.Divider(height=10, color="#2C2C2C"),
-        
-        # Coluna da direita (Perfil, Notificações, Gráficos)
-        right_column = ft.Container(
-            expand=True,
-            bgcolor="#888888",
-            border_radius=30,
-            margin=20,
-            # height=950,
-            # width=230,
-            content=ft.Column(  # Usamos Column para permitir múltiplos containers
-                controls=[
-                    # Perfil do usuário
-                    ft.Container(
-                        bgcolor="#222222",
-                        height=150,
-                        margin=5,
-                        expand=True,
-                        border_radius=30,
-                        alignment=ft.alignment.center,
-                        content=ft.Text("Profile", color="white")
-                    ),
-
-                    # Notificações
-                    ft.Container(
-                        bgcolor="#333333",
-                        height=200,
-                        margin=5,
-                        expand=True,
-                        border_radius=30,
-                        alignment=ft.alignment.center,
-                        content=ft.Text("Notifications", color="white")
-                    ),
-
-                    # Gráfico de sessões
-                    ft.Container(
-                        bgcolor="#444444",
-                        expand=True,
-                        height=200,
-                        margin=5,
-                        border_radius=30,
-                        alignment=ft.alignment.center,
-                        content=ft.Text("Device Sessions", color="white")
-                    ),
-                ],
-                # spacing=10  # Espaçamento entre os containers
-            ),
-            # margin=20
-        )
-
         # Layout principal (duas colunas lado a lado)
+         # Layout principal
         return ft.Row(
-            controls=[
-                main_container,  # Esquerda
-                right_column    # Direita
-            ],
-            # spacing=20
+            expand=True,
+            controls=[main_container],
         )
     
-class ViewScreen(Screen):
+class Sendies(Screen):
    
     def build(self):
-        return ft.Text("Tela de Visualização", size=20)
+        return ft.Text("Tela de enviados", size=20)
 
-class DownloadScreen(Screen):
+class Notifications(Screen):
     def build(self):
-        return ft.Text("Tela de Downloads", size=20)
-
-class ChartScreen(Screen):
-    
-    def build(self):
-                
-        chart = ft.BarChart(
-            bar_groups=[
-                ft.BarChartGroup(
-                    x=0,
-                    bar_rods=[
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=40,
-                            width=40,
-                            color=ft.colors.AMBER,
-                            tooltip="Apple",
-                            border_radius=0,
-                        ),
-                    ],
-                ),
-                ft.BarChartGroup(
-                    x=1,
-                    bar_rods=[
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=100,
-                            width=40,
-                            color=ft.colors.BLUE,
-                            tooltip="Blueberry",
-                            border_radius=0,
-                        ),
-                    ],
-                ),
-                ft.BarChartGroup(
-                    x=2,
-                    bar_rods=[
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=30,
-                            width=40,
-                            color=ft.colors.RED,
-                            tooltip="Cherry",
-                            border_radius=0,
-                        ),
-                    ],
-                ),
-                ft.BarChartGroup(
-                    x=3,
-                    bar_rods=[
-                        ft.BarChartRod(
-                            from_y=0,
-                            to_y=60,
-                            width=40,
-                            color=ft.colors.ORANGE,
-                            tooltip="Orange",
-                            border_radius=0,
-                        ),
-                    ],
-                ),
-            ],
-            border=ft.border.all(1, ft.colors.GREY_400),
-            left_axis=ft.ChartAxis(
-                labels_size=40, title=ft.Text("Fruit supply"), title_size=40
-            ),
-            bottom_axis=ft.ChartAxis(
-                labels=[
-                    ft.ChartAxisLabel(
-                        value=0, label=ft.Container(ft.Text("Apple"), padding=10)
-                    ),
-                    ft.ChartAxisLabel(
-                        value=1, label=ft.Container(ft.Text("Blueberry"), padding=10)
-                    ),
-                    ft.ChartAxisLabel(
-                        value=2, label=ft.Container(ft.Text("Cherry"), padding=10)
-                    ),
-                    ft.ChartAxisLabel(
-                        value=3, label=ft.Container(ft.Text("Orange"), padding=10)
-                    ),
-                ],
-                labels_size=40,
-            ),
-            horizontal_grid_lines=ft.ChartGridLines(
-                color=ft.colors.GREY_300, width=1, dash_pattern=[3, 3]
-            ),
-            tooltip_bgcolor=ft.colors.with_opacity(0.5, ft.colors.GREY_300),
-            max_y=110,
-            interactive=True,
-            expand=True,  # Faz o gráfico ocupar todo o espaço disponível
-        )
-        
-        # Coloca o gráfico dentro de um Container para expandir e ocupar a tela inteira
-
-        return ft.Container(
-                content=chart,
-                padding=50,  # Defina o padding para ajustar a distância
-                expand=True,  # Garante que o gráfico vai expandir e ocupar toda a tela
-                alignment=ft.alignment.center, # Centraliza o gráfico
-                height=1000,
-            )
+        return ft.Text("Tela de alertas", size=20)
     
 class SettingsScreen(ft.UserControl):
-
-    def __init__(self, user=None):
-
+    
+    def __init__(self, page, user=None):
+        self.page = page
         super().__init__()
         
+        self.date_picker = ft.DatePicker()
+        page.overlay.append(self.date_picker)
+
+        self.time_picker = ft.TimePicker()
+        page.overlay.append(self.time_picker)
 
         self.user = user or {"name": "Usuário", "email": "email@example.com", "photo_url": ""}
         # Contêiner para o conteúdo dinâmico
 
         self.content_container = ft.Container(
             bgcolor="#222222",
-            expand=True,
+            # expand=True, # removido para permitir que o container se expanda
             margin=10,
             border_radius=20,
             padding=20,
@@ -652,117 +487,78 @@ class SettingsScreen(ft.UserControl):
                 spacing=15,
             )
         )
+   
+    def change_theme_mode(self, e):
+        """Alterna entre temas claro e escuro."""
+        self.page.theme_mode = (
+            ft.ThemeMode.LIGHT
+            if self.page.theme_mode == ft.ThemeMode.DARK
+            else ft.ThemeMode.DARK
+        )
+        self.page.update()
     
+    def handle_change(e: ft.ControlEvent):
+        print(f"change on panel with index {e.data}")
+
     def build(self):
 
-        self.theme_switch = ft.Switch(label="Tema Claro", on_change="self.change_theme")
+        self.theme_switch = ft.Switch(label="  ESCURO/CLARO", thumb_icon=ft.icons.DARK_MODE, on_change=self.change_theme_mode)
         self.font_slider = ft.Slider(min=10, max=30, value=16, label="Tamanho da Fonte", on_change="change_font_size")
         
         self.theme_settings = ft.Container(
             bgcolor="#222222",
-            expand=True,
+            # expand=True, # removido para permitir que o container se expanda
             border_radius=20,
             padding=20,
             margin=10,
             content=ft.Column(
                 controls=[
                     ft.Text("Configurações de Tema", size=16, weight=ft.FontWeight.BOLD, color="white"),
+                    ft.Divider(height=10, color="#2C2C2C"),
                     self.theme_switch,
+                    ft.Divider(height=10, color="#2C2C2C"),
+                    ft.Text("Configuração de Fonte", size=16,  weight=ft.FontWeight.BOLD, color="white"),
                     self.font_slider,
                 ],
                 expand=True,
                 spacing=20,
             )
         )
-    
-        self.additional_container = ft.Container(
+
+        self.sendies_message = ft.Container(
             bgcolor="#222222",
-            height=500,
-            margin=10,
+            # expand=True, # removido para permitir que o container se expanda
+            border_radius=20,
             padding=20,
-            border_radius=30,
+            margin=10,
             content=ft.Column(
                 controls=[
+                    ft.Text("Programação de envio Data/Hora", size=16, weight=ft.FontWeight.BOLD, color="white"),
+                    ft.Divider(height=10, color="#2C2C2C"),
                     ft.Row(
-                        controls=[
-                            ft.Text("Backup Base de Dados", size=18, weight=ft.FontWeight.BOLD, color="white"),
-                            ft.Icon(ft.icons.BACKUP, color="white"),
+                        [
+                            ft.ElevatedButton("DATA", width=110, height=50, on_click=lambda _: self.date_picker.pick_date()),
+                            ft.ElevatedButton("HORA", width=110, height=50, on_click=lambda _: self.time_picker.pick_time()),
                         ]
                     ),
-            ft.Divider(height=10, color="#2C2C2C"),
+                    ft.Divider(height=10, color="#2C2C2C"),
+                    ft.Text("Programação de envio por dia", size=16, weight=ft.FontWeight.BOLD, color="white"),
+                    ft.Row(
+                        [
 
-            # Row contendo duas colunas lado a lado
-            ft.Row(
-                controls=[
-                    # Primeira coluna com dois containers menores
-                    ft.Container(
-                        bgcolor="#363636",
-                        width=250,
-                        height=390,
-                        padding=5,
-                        border_radius=30,
-                        content=ft.Column(
-                            controls=[
-                                ft.Container(
-                                    bgcolor="#363636",
-                                    padding=10,
-                                    border_radius=20,
-                                    content=ft.ElevatedButton(
-                                        text="DATA",
-                                        on_click=lambda e: print("Data do Backup"),
-                                        bgcolor="#4F4F4F",
-                                        color="white",
-                                        height=90,
-                                        width=180,
-                                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=20),
-                                        text_style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD),
-                                        )
-                                    ),
-                                    alignment=ft.alignment.center
-                                ),
-                                ft.Container(
-                                    bgcolor="#363636",
-                                    padding=10,
-                                    border_radius=20,
-                                    content=ft.ElevatedButton(
-                                        text="HORA",
-                                        on_click=lambda e: print("Hora do Backup"),
-                                        bgcolor="#4F4F4F",
-                                        color="white",
-                                        height=90,
-                                        width=180,
-                                        style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=20),
-                                        text_style=ft.TextStyle(size=20, weight=ft.FontWeight.BOLD),
-                                        )
-                                    ),
-                                    alignment=ft.alignment.center                      
-                                ),
-                            ],
-                            spacing=5,  # Reduzindo o espaço entre os botões
-                            alignment=ft.MainAxisAlignment.CENTER
-                        ),
-                    ),
-
-                    # Segunda coluna com um container que expande
-                    ft.Container(
-                        bgcolor="#2C2C2C",
-                        expand=True,  # Faz o container ocupar todo o espaço restante
-                        height=390,
-                        margin=5,
-                        padding=20,
-                        border_radius=30,
-                        content=ft.Text("Container maior que se expande", color="white"),
-                    ),
-                ]
-            ),
-        ],
-        spacing=10,
-    ),
-)
-        
+                        ]
+                    )
+                    
+                   
+                ],
+                expand=True,
+                spacing=20,
+            )
+        )
+    
         self.Information_additional = ft.Container(
             bgcolor="#222222",
-            height=500,
+            # height=500, # removido para permitir que o container se expanda
             margin=10,
             padding=20,
             border_radius=30,
@@ -834,6 +630,93 @@ class SettingsScreen(ft.UserControl):
                 alignment=ft.MainAxisAlignment.CENTER,  # Centraliza tudo dentro do Column
             ),
         )
+
+        self.Buttons_save_cancel = ft.Container(
+            bgcolor="#222222",
+            border_radius=20,
+            padding=20,
+            margin=10,
+            content= ft.Column(
+                    controls=[
+                            ft.Row(
+                                [
+                                    ft.ElevatedButton("SALVAR", bgcolor="green", width=140, height=50),
+                                    ft.ElevatedButton("CANCELAR", bgcolor="red", width=140, height=50)
+                                ],
+                        ),
+                    ],                
+                )
+        )
+ 
+        self.panel = ft.Container(
+            content=ft.ExpansionPanelList(
+                elevation=4,
+                on_change=self.handle_change,
+                controls=[
+                    ft.ExpansionPanel(
+                        bgcolor="#222222",
+                        header=ft.Text("Termos e Avisos do Sistema", style="titleMedium", color="white"),
+                        content=ft.Container(
+                            content=ft.Text(
+                                """
+                               📄 Termo de Uso e Responsabilidade
+
+                               
+                                Este sistema foi desenvolvido com propósito exclusivamente profissional, visando otimizar processos e garantir maior produtividade ao contratante.
+                                Ao utilizar este software, o usuário declara estar ciente e de acordo com os termos e condições descritos a seguir. Eventuais problemas decorrentes 
+                                do uso indevido ou em desacordo com as diretrizes aqui estabelecidas não serão de responsabilidade dos desenvolvedores ou fornecedores do sistema.
+                                Por favor, leia atentamente:
+
+                                ⚠️ Regras de Uso e Responsabilidades
+                                • Uso exclusivo: Este sistema é licenciado para uso exclusivo da pessoa ou empresa contratante. O repasse a terceiros, com ou sem fins lucrativos,
+                                é expressamente proibido.
+
+                                • Confidencialidade: Todos os dados inseridos e gerados são considerados confidenciais. O usuário se compromete a não divulgar, compartilhar ou vazar
+                                qualquer informação gerada pelo sistema.
+
+                                • Login pessoal: Não compartilhe seu login ou senha com terceiros. Cada usuário é responsável pelas ações realizadas com sua conta.
+
+                                • Alterações indevidas: Usuários com conhecimento técnico avançado não devem alterar as configurações internas ou tentar modificar o funcionamento padrão
+                                do sistema, sob risco de mau funcionamento ou perda de dados.
+
+                                • Mensagens automáticas: O sistema utiliza o envio de mensagens pré-programadas para comunicação com clientes. O uso indevido, repetitivo ou com linguagem
+                                inadequada pode resultar em bloqueio por parte da plataforma WhatsApp. Os desenvolvedores não se responsabilizam por sanções aplicadas por plataformas externas.
+
+                                • Penalidades: O uso incorreto, abusivo ou que viole as leis vigentes poderá acarretar bloqueio imediato do acesso ao sistema, além de possíveis medidas judiciais.
+
+                                • Segurança: É responsabilidade do usuário manter o ambiente seguro (evitar vírus, keyloggers, redes públicas inseguras) ao acessar o sistema.
+
+                                • Backup de dados: Recomendamos que o usuário realize backups periódicos de suas informações, mesmo com funcionalidades automatizadas.
+
+                                • Suporte técnico: O suporte será prestado apenas ao titular da licença ou aos contatos autorizados. Qualquer solicitação feita por terceiros poderá ser recusada.
+
+                                • Atualizações: O sistema poderá receber atualizações automáticas. É responsabilidade do usuário manter a versão atualizada para garantir compatibilidade e segurança.
+
+                                • Restrições legais: É expressamente proibido o uso do sistema para práticas ilegais, como spam, golpes, fraudes ou qualquer violação de normas éticas e legais.
+
+                                ✅ Aceitação dos Termos
+                                Ao utilizar este sistema, você declara ter lido, compreendido e aceito integralmente os termos acima descritos, isentando os desenvolvedores e fornecedores de qualquer
+                                responsabilidade decorrente do uso indevido ou não autorizado da aplicação.
+
+                                
+                                                        """                                                       
+                                                        ,
+                                color="white",
+                                size=14,
+                            ),
+                            padding=5,
+                            alignment=ft.alignment.top_left,
+                            # bgcolor="#333333",
+                        ),
+                        expanded=False
+                    )
+                ]
+            ),
+            bgcolor="#222222",
+            border_radius=12,
+            padding=20,
+            margin=10
+        )
     
         # Atualizando para ListView
         list_view = ft.ListView(
@@ -841,15 +724,20 @@ class SettingsScreen(ft.UserControl):
                 self.build_google_account_container(),
                 self.content_container,
                 self.theme_settings,
-                self.additional_container,
+                self.sendies_message,
+                self.panel,
                 self.Information_additional,
+                self.Buttons_save_cancel,
+               
             ],
-            expand=True,
-            padding=20,
-            auto_scroll=True,  # Habilitar rolagem automática se o conteúdo exceder a altura
-            height=980,  # Adicionando altura fixa ao ListView
+            # expand=True, # Removido para permitir que o ListView se expanda
+            padding=0,
+            auto_scroll=True,  # Habilitar rolagem automática
         )
         
-        return list_view
+        return ft.Container(
+            content=list_view,
+            expand=True,
+        )
 
 ft.app(main, assets_dir="Image")
